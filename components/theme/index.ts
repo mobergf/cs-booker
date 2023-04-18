@@ -14,15 +14,14 @@ const theme = extendTheme(
     },
     colors: {
       brand: {
-        primary: "#EE6055",
-        primaryLight: "#FF7B87",
+        primary: "#00837C",
+        primaryDark: "#005a55",
         secondary: "#2F4858",
         secondaryDark: "#20313c",
-        champagne: "#F2D398",
-        champagneLight: "#fff5e2",
         blue: "#405378",
-        green: "#00837C",
         gray: "#F7F7F7",
+        green: "#00837C",
+        500: "#00837C",
       },
     },
     shadows: {
@@ -39,37 +38,10 @@ const theme = extendTheme(
             transition: "0.2s ease",
             color: "white",
             _hover: {
-              bg: "brand.primaryLight",
+              bg: "brand.primaryDark",
             },
             _focus: {
-              bg: "brand.primaryLight",
-            },
-          },
-          secondary: {
-            background: "brand.secondary",
-            borderRadius: "md",
-            px: 8,
-            transition: "0.2s ease",
-            color: "white",
-            _hover: {
-              bg: "brand.secondaryDark",
-            },
-            _focus: {
-              bg: "brand.secondaryDark",
-            },
-          },
-          outlined: {
-            background: "transparent",
-            borderRadius: "md",
-            h: 12,
-            px: 8,
-            transition: "0.2s ease",
-            color: "white",
-            _hover: {
-              bg: "brand.primaryLight",
-            },
-            _focus: {
-              bg: "brand.primaryLight",
+              bg: "brand.primaryDark",
             },
           },
         },
@@ -80,12 +52,12 @@ const theme = extendTheme(
       },
       Input: {
         defaultProps: {
-          focusBorderColor: "brand.primaryLight",
+          focusBorderColor: "brand.primary",
         },
       },
       NumberInput: {
         defaultProps: {
-          focusBorderColor: "brand.primaryLight",
+          focusBorderColor: "brand.primary",
         },
       },
     },

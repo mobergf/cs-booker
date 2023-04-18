@@ -1,17 +1,16 @@
 import {
+  Button,
+  Checkbox,
+  Flex,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Flex,
-  Button,
-  Radio,
-  RadioGroup,
-  Stack,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 interface ISignUpModal {
@@ -22,16 +21,22 @@ interface ISignUpModal {
 
 const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
   const { data } = useSession();
-  const [value, setValue] = useState("no");
-
-  console.log(value);
+  const [value, setValue] = useState<"yes" | "no">("no");
+  const { replace, asPath } = useRouter();
 
   const submitSign = async () => {
-    const bob = await fetch("/api/signup", {
+    await fetch("/api/signup", {
       method: "POST",
-      body: JSON.stringify({ id: data?.user.id, inhouse: value }),
-    }).then((res) => res.json());
-    console.log(bob);
+      body: JSON.stringify({
+        id: data?.user.id,
+        inhouse: value === "yes",
+        type: activeSign?.type,
+        date: activeSign?.date,
+      }),
+    }).finally(() => {
+      replace(asPath, undefined, { scroll: false });
+      onClose();
+    });
   };
 
   return (
@@ -39,22 +44,21 @@ const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {activeSign?.date}: {activeSign?.type === "night" ? "Kväll" : "Lunch"}
+          {activeSign?.date}
+          {activeSign?.type === "night" ? " Kväll" : " Lunch"}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb="6">
-          <RadioGroup onChange={setValue} value={value} name="inhouse">
-            <Stack direction="row">
-              <Radio _checked={{ bg: "brand.green" }} size="lg" value="no">
-                Nej
-              </Radio>
-              <Radio _checked={{ bg: "brand.green" }} size="lg" value="yes">
-                Ja
-              </Radio>
-            </Stack>
-          </RadioGroup>
+          <Checkbox
+            size="lg"
+            value={value}
+            checked={value === "yes"}
+            onChange={() => setValue((prev) => (prev === "yes" ? "no" : "yes"))}
+          >
+            Bara inhouse
+          </Checkbox>
           <Flex direction="row" gap="4" mt="4">
-            <Button flex="1" variant="secondary" onClick={() => submitSign()}>
+            <Button flex="1" onClick={() => submitSign()}>
               Svara
             </Button>
             <Button variant="outline" flex="1" onClick={() => onClose()}>

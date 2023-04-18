@@ -5,21 +5,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(JSON.parse(req.body));
+  const { type, date, inhouse, id } = JSON.parse(req.body);
+  const pb = await initPocketBase(req, res);
 
-  const pb = initPocketBase(req, res);
+  const hasGame = await pb
+    .collection("csmatch")
+    .getList(1, 50, {
+      filter: `date ~ "${date}" && type = "${type}"`,
+    })
+    .then((res) => !!res?.items?.length && res?.items?.[0]);
 
-  //   await pb.collection("user_match").create()
-  //   if (currExercise?.created)
-  //   await newPb.collection("weight").update(currExercise?.id, data);
-  // else {
-  //   await newPb.collection("weight").create(data);
-  //   const hasWorkout = await newPb.collection("workout").getFullList(20, {
-  //     filter: `created~"${new Date().toISOString().slice(0, 10)}"`,
-  //   });
-  //   if (!hasWorkout?.length)
-  //     await newPb.collection("workout").create({ field: type });
-  // }
+  if (hasGame) {
+    const postData = {
+      match: hasGame.id,
+      user: id,
+      inhouse: inhouse,
+    };
 
-  res.status(200).json({ name: "John Doe" });
+    await pb.collection("user_match").create(postData);
+    return res.status(200).json({});
+  }
+
+  await pb
+    .collection("csmatch")
+    .create({ type, date })
+    .then(async (res) => {
+      const postData = {
+        match: res.id,
+        user: id,
+        inhouse: inhouse,
+      };
+      await pb.collection("user_match").create(postData);
+    });
+  return res.status(200).json({});
 }

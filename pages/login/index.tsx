@@ -13,21 +13,13 @@ import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useRef, useState } from "react";
-
-const textAnimation = keyframes`
-0% {
-  color: #EE6055;
-}
-50% {
- color: #A2558F;
-}
-100% {
-  color: #EE6055;
-}
-`;
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
-  const [error, setError] = useState("");
+  const { query } = useRouter();
+  const [error, setError] = useState(
+    query?.callbackUrl?.includes("error") ? "Couldn't authenticate" : ""
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const userRef = useRef<HTMLInputElement>(null);
@@ -59,9 +51,7 @@ export default function LoginPage() {
         direction="column"
         gap="2"
       >
-        <Heading as="h1" animation={`${textAnimation} 6s infinite linear`}>
-          Gym notes
-        </Heading>
+        <Heading as="h1">Vill du spella spell?</Heading>
         <form onSubmit={(e) => handleSubmit(e)}>
           <FormControl
             p="8"

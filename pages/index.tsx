@@ -15,6 +15,8 @@ import {
 import { SignUpModal } from "components";
 import initPocketBase from "components/pocketbase/pocketbase";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const Page = ({
@@ -24,11 +26,13 @@ const Page = ({
   matches: string;
   userMatches: string;
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose: discClose } = useDisclosure();
   const [activeSign, setActiveSign] = useState<{
     type: string;
     date: string;
   }>();
+  const { replace, asPath } = useRouter();
+  const { data: userData } = useSession();
 
   const data = JSON.parse(matches);
   const parsedUserMatches = JSON.parse(userMatches);
@@ -40,16 +44,120 @@ const Page = ({
     dateArray.push(date.toISOString().slice(0, 10));
   }
 
-  //Måste skicka in id på match (om det finns) som användaren ska signa upp sig på
-  //Om det inte finns så vet vi i APIt att vi ska skapa en match på den dagen och sen skapa en koppling i user_match
   const handleClick = (type: string, date: string) => {
     setActiveSign({ type, date });
     onOpen();
   };
 
+  const onClose = () => {
+    setActiveSign(undefined);
+    discClose();
+  };
+
+  const handleRemoveSign = async (id: string) => {
+    await fetch("/api/deletesign", {
+      method: "POST",
+      body: JSON.stringify({
+        id,
+      }),
+    }).finally(() => {
+      replace(asPath, undefined, { scroll: false });
+    });
+  };
+
+  const DisplayList = ({
+    item,
+    type,
+  }: {
+    item: string;
+    type: "day" | "night";
+  }) =>
+    !!data?.items?.length &&
+    data.items.map(
+      (item2: any) =>
+        new Date(item2.date).getDate() === new Date(item).getDate() &&
+        item2.type === type && (
+          <OrderedList
+            display={{ md: "grid" }}
+            gridTemplateRows={{ md: "repeat(5, 1fr)" }}
+            gridAutoFlow="column"
+            p="4"
+          >
+            {parsedUserMatches?.items
+              ?.filter((x: any) => x.match === item2.id)
+              .map((pum: any) => (
+                <ListItem width="max-content" bg={pum?.inhouse && "yellow.200"}>
+                  {pum?.expand?.user?.name}
+                  {pum.inhouse && " (bara inhouse)"}
+                </ListItem>
+              ))}
+          </OrderedList>
+        )
+    );
+
+  const ButtonFilter = ({
+    item,
+    type,
+  }: {
+    item: string;
+    type: "day" | "night";
+  }) => {
+    const hasMatchOnDate =
+      !!data?.items?.length &&
+      data.items.filter(
+        (item2: any) =>
+          new Date(item2.date).getDate() === new Date(item).getDate() &&
+          item2.type === type
+      );
+
+    if (!hasMatchOnDate?.length)
+      return (
+        <Button
+          onClick={() => handleClick(type, item)}
+          variant="outline"
+          minWidth={{ md: "40" }}
+          _hover={{ bg: "gray.100" }}
+        >
+          Signa upp
+        </Button>
+      );
+
+    return hasMatchOnDate.map((y: any) =>
+      !!parsedUserMatches?.items?.find(
+        (x: any) => x.match === y.id && x.user === userData?.user.id
+      ) ? (
+        <Button
+          onClick={() =>
+            handleRemoveSign(
+              parsedUserMatches?.items?.find(
+                (x: any) => x.match === y.id && x.user === userData?.user.id
+              ).id
+            )
+          }
+          variant="outline"
+          minWidth={{ md: "40" }}
+          _hover={{ bg: "gray.100" }}
+        >
+          Signa av
+        </Button>
+      ) : (
+        <Button
+          onClick={() => handleClick(type, item)}
+          variant="outline"
+          minWidth={{ md: "40" }}
+          _hover={{ bg: "gray.100" }}
+        >
+          Signa upp
+        </Button>
+      )
+    );
+  };
   return (
     <>
-      <Heading>Spela spel!?!?</Heading>
+      <Flex px={{ base: 4, md: 0 }} direction="row" justify="space-between">
+        <Heading>Spela spel</Heading>
+        <Button onClick={() => signOut()}>Logga ut</Button>
+      </Flex>
       <Accordion defaultIndex={[0]} allowMultiple>
         {dateArray.map((item, ix) => (
           <AccordionItem
@@ -80,35 +188,9 @@ const Page = ({
                   <Heading as="h3" fontSize="2xl">
                     Lunchpang
                   </Heading>
-                  <Button
-                    onClick={() => handleClick("day", item)}
-                    variant="outline"
-                    minWidth={{ md: "40" }}
-                    _hover={{ bg: "gray.300" }}
-                  >
-                    Signa upp
-                  </Button>
+                  <ButtonFilter item={item} type="day" />
                 </Flex>
-                {!!data?.items?.length &&
-                  data.items.map(
-                    (item2: any) =>
-                      new Date(item2.date).getDate() ===
-                        new Date(item).getDate() &&
-                      item2.type === "day" && (
-                        <Box p="4">
-                          <OrderedList>
-                            {parsedUserMatches?.items
-                              ?.filter((x: any) => x.match === item2.id)
-                              .map((pum: any) => (
-                                <ListItem>
-                                  {pum?.expand?.user?.name}
-                                  {pum.inhouse && " (bara inhouse)"}
-                                </ListItem>
-                              ))}
-                          </OrderedList>
-                        </Box>
-                      )
-                  )}
+                <DisplayList item={item} type="day" />
               </Box>
               <Box p={{ md: 4 }} bg="brand.gray" mt={{ base: 4, md: 8 }}>
                 <Flex
@@ -122,36 +204,15 @@ const Page = ({
                   <Heading as="h3" fontSize="2xl">
                     Kvällspang
                   </Heading>
-                  <Button
-                    onClick={() => handleClick("night", item)}
-                    variant="outline"
-                    minWidth={{ md: "40" }}
-                    _hover={{ bg: "gray.300" }}
-                  >
-                    Signa upp
-                  </Button>
+                  <ButtonFilter item={item} type="night" />
                 </Flex>
-                {!!data?.items?.length &&
-                  data.items.map(
-                    (item2: any) =>
-                      new Date(item2.date).getDate() ===
-                        new Date(item).getDate() &&
-                      item2.type === "night" && (
-                        <Box p="4">
-                          {parsedUserMatches?.items
-                            ?.filter((x: any) => x.match === item2.id)
-                            .map((pum: any) => (
-                              <p>{pum?.expand?.user?.name}</p>
-                            ))}
-                        </Box>
-                      )
-                  )}
+                <DisplayList item={item} type="night" />
               </Box>
             </AccordionPanel>
           </AccordionItem>
         ))}
       </Accordion>
-      <SignUpModal {...{ isOpen, onClose, activeSign }} />
+      {isOpen && <SignUpModal {...{ isOpen, onClose, activeSign }} />}
     </>
   );
 };
@@ -164,7 +225,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const csmatch = await pb
     .collection("csmatch")
-    .getList(1, 5, {
+    .getList(1, 50, {
       filter: `date >= "${new Date().toISOString().slice(0, 10)}"`,
     })
     .then((res) => res);
