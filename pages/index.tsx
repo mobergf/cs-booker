@@ -78,6 +78,7 @@ const Page = ({
         new Date(item2.date).getDate() === new Date(item).getDate() &&
         item2.type === type && (
           <OrderedList
+            key={item2.date}
             display={{ md: "grid" }}
             gridTemplateRows={{ md: "repeat(5, 1fr)" }}
             gridAutoFlow="column"
@@ -85,8 +86,12 @@ const Page = ({
           >
             {parsedUserMatches?.items
               ?.filter((x: any) => x.match === item2.id)
-              .map((pum: any) => (
-                <ListItem width="max-content" bg={pum?.inhouse && "yellow.200"}>
+              .map((pum: any, ix: number) => (
+                <ListItem
+                  key={ix}
+                  width="max-content"
+                  bg={pum?.inhouse && "yellow.200"}
+                >
                   {pum?.expand?.user?.name}
                   {pum.inhouse && " (bara inhouse)"}
                 </ListItem>
@@ -122,11 +127,12 @@ const Page = ({
         </Button>
       );
 
-    return hasMatchOnDate.map((y: any) =>
+    return hasMatchOnDate.map((y: any, ix: number) =>
       !!parsedUserMatches?.items?.find(
         (x: any) => x.match === y.id && x.user === userData?.user.id
       ) ? (
         <Button
+          key={ix}
           onClick={() =>
             handleRemoveSign(
               parsedUserMatches?.items?.find(
@@ -142,6 +148,7 @@ const Page = ({
         </Button>
       ) : (
         <Button
+          key={ix}
           onClick={() => handleClick(type, item)}
           variant="outline"
           minWidth={{ md: "40" }}

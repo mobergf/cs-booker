@@ -21,16 +21,16 @@ function MyApp({
           />
           <meta name="description" content="Description" />
           <meta name="keywords" content="Keywords" />
-          <title>Next.js PWA Example</title>
+          <title>Spela spell</title>
           <link rel="manifest" href="/manifest.json" />
           <link
-            href="/icons/favicon-16x16.png"
+            href="/icons/icon-16x16.png"
             rel="icon"
             type="image/png"
             sizes="16x16"
           />
           <link
-            href="/icons/favicon-32x32.png"
+            href="/icons/icon-32x32.png"
             rel="icon"
             type="image/png"
             sizes="32x32"
@@ -39,7 +39,12 @@ function MyApp({
           <meta name="theme-color" content="#317EFB" />
         </Head>
         <ScaleFade key={router.route} initialScale={0.6} in={true}>
-          <Container maxW="container.lg" px={{ base: 0, md: "4" }} my="4">
+          <Container
+            maxW="container.lg"
+            px={{ base: 0, md: "4" }}
+            mt="0"
+            py="4"
+          >
             <Component {...pageProps} />
           </Container>
         </ScaleFade>

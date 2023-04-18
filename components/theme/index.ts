@@ -7,8 +7,11 @@ const theme = extendTheme(
     styles: {
       global: {
         body: {
-          bg: "gray.50",
+          bg: "url(/csbook.jpg)",
+          bgSize: "cover",
+          bgRepeat: "no-repeat",
           color: "brand.secondaryDark",
+          h: "100vh",
         },
       },
     },
