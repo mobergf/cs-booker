@@ -39,7 +39,7 @@ function MyApp({
           <meta name="theme-color" content="#317EFB" />
         </Head>
         <ScaleFade key={router.route} initialScale={0.6} in={true}>
-          <Container maxW="container.lg" mt="4">
+          <Container maxW="container.lg" px={{ base: 0, md: "4" }} mt="4">
             <Component {...pageProps} />
           </Container>
         </ScaleFade>

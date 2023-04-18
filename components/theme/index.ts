@@ -7,7 +7,7 @@ const theme = extendTheme(
     styles: {
       global: {
         body: {
-          bg: "brand.champagneLight",
+          bg: "gray.50",
           color: "brand.secondaryDark",
         },
       },
@@ -21,6 +21,8 @@ const theme = extendTheme(
         champagne: "#F2D398",
         champagneLight: "#fff5e2",
         blue: "#405378",
+        green: "#00837C",
+        gray: "#F7F7F7",
       },
     },
     shadows: {
@@ -33,7 +35,6 @@ const theme = extendTheme(
           primary: {
             background: "brand.primary",
             borderRadius: "md",
-            h: 12,
             px: 8,
             transition: "0.2s ease",
             color: "white",
@@ -47,7 +48,6 @@ const theme = extendTheme(
           secondary: {
             background: "brand.secondary",
             borderRadius: "md",
-            h: 12,
             px: 8,
             transition: "0.2s ease",
             color: "white",
