@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { type, date, inhouse, id } = JSON.parse(req.body);
+  const { type, date, id, comment } = JSON.parse(req.body);
   const pb = await initPocketBase(req, res);
 
   const hasGame = await pb
@@ -19,7 +19,7 @@ export default async function handler(
     const postData = {
       match: hasGame.id,
       user: id,
-      inhouse: inhouse,
+      comment: comment,
     };
 
     await pb.collection("user_match").create(postData);
@@ -33,7 +33,7 @@ export default async function handler(
       const postData = {
         match: res.id,
         user: id,
-        inhouse: inhouse,
+        comment: comment,
       };
       await pb.collection("user_match").create(postData);
     });

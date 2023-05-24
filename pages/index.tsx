@@ -19,6 +19,16 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+const weekdays = [
+  "Söndag",
+  "Måndag",
+  "Tisdag",
+  "Onsdag",
+  "Torsdag",
+  "Fredag",
+  "Lördag",
+];
+
 const Page = ({
   matches,
   userMatches,
@@ -38,7 +48,7 @@ const Page = ({
   const parsedUserMatches = JSON.parse(userMatches);
   const dateArray: string[] = [];
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 7; i++) {
     const date = new Date();
     date.setDate(date.getDate() + i);
     dateArray.push(date.toISOString().slice(0, 10));
@@ -87,13 +97,9 @@ const Page = ({
             {parsedUserMatches?.items
               ?.filter((x: any) => x.match === item2.id)
               .map((pum: any, ix: number) => (
-                <ListItem
-                  key={ix}
-                  width="max-content"
-                  bg={pum?.inhouse && "yellow.200"}
-                >
+                <ListItem key={ix} width="max-content">
                   {pum?.expand?.user?.name}
-                  {pum.inhouse && " (bara inhouse)"}
+                  {pum.comment && ` (${pum.comment})`}
                 </ListItem>
               ))}
           </OrderedList>
@@ -121,7 +127,9 @@ const Page = ({
           onClick={() => handleClick(type, item)}
           variant="outline"
           minWidth={{ md: "40" }}
-          _hover={{ bg: "gray.100" }}
+          color="white"
+          bg="brand.primary"
+          _hover={{ lg: { bg: "brand.primaryDark" } }}
         >
           Signa upp
         </Button>
@@ -142,7 +150,7 @@ const Page = ({
           }
           variant="outline"
           minWidth={{ md: "40" }}
-          _hover={{ bg: "gray.100" }}
+          _hover={{ lg: { bg: "gray.100" } }}
         >
           Signa av
         </Button>
@@ -152,7 +160,9 @@ const Page = ({
           onClick={() => handleClick(type, item)}
           variant="outline"
           minWidth={{ md: "40" }}
-          _hover={{ bg: "gray.100" }}
+          color="white"
+          bg="brand.primary"
+          _hover={{ lg: { bg: "brand.primaryDark" } }}
         >
           Signa upp
         </Button>
@@ -174,10 +184,13 @@ const Page = ({
             border="none"
             bg="white"
           >
-            <AccordionButton py="4">
+            <AccordionButton
+              py="4"
+              _hover={{ lg: { bgColor: "blackAlpha.50" } }}
+            >
               <Box as="span" flex="1" textAlign="left">
                 <Heading variant="h2" fontSize="2xl">
-                  {item}
+                  {`${weekdays[new Date(item).getDay()]} - ${item}`}
                 </Heading>
               </Box>
               <AccordionIcon fontSize="4xl" />

@@ -41,10 +41,10 @@ const theme = extendTheme(
             transition: "0.2s ease",
             color: "white",
             _hover: {
-              bg: "brand.primaryDark",
+              lg: { bg: "brand.primaryDark" },
             },
             _focus: {
-              bg: "brand.primaryDark",
+              lg: { bg: "brand.primaryDark" },
             },
           },
         },

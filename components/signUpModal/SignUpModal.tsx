@@ -1,13 +1,14 @@
 import {
   Button,
-  Checkbox,
   Flex,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -21,21 +22,26 @@ interface ISignUpModal {
 
 const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
   const { data } = useSession();
-  const [value, setValue] = useState<"yes" | "no">("no");
+  const [isLoading, setIsLoading] = useState(false);
+  const [commentValue, setCommentValue] = useState<string>();
   const { replace, asPath } = useRouter();
 
   const submitSign = async () => {
+    setIsLoading(true);
     await fetch("/api/signup", {
       method: "POST",
       body: JSON.stringify({
         id: data?.user.id,
-        inhouse: value === "yes",
         type: activeSign?.type,
         date: activeSign?.date,
+        comment: commentValue,
       }),
-    }).finally(() => {
-      replace(asPath, undefined, { scroll: false });
-      onClose();
+    }).then((res) => {
+      if (res.ok) {
+        setIsLoading(false);
+        replace(asPath, undefined, { scroll: false });
+        onClose();
+      }
     });
   };
 
@@ -48,17 +54,15 @@ const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
           {activeSign?.type === "night" ? " Kväll" : " Lunch"}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb="6">
-          <Checkbox
-            size="lg"
-            value={value}
-            checked={value === "yes"}
-            onChange={() => setValue((prev) => (prev === "yes" ? "no" : "yes"))}
-          >
-            Bara inhouse
-          </Checkbox>
+        <ModalBody pb="6" pt="0">
+          <Text>Kommentar</Text>
+          <Input
+            value={commentValue}
+            onChange={(e) => setCommentValue(e.target.value)}
+            placeholder="T.ex tid eller enbart inhouse"
+          />
           <Flex direction="row" gap="4" mt="4">
-            <Button flex="1" onClick={() => submitSign()}>
+            <Button isLoading={isLoading} flex="1" onClick={() => submitSign()}>
               Svara
             </Button>
             <Button variant="outline" flex="1" onClick={() => onClose()}>

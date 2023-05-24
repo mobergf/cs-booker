@@ -14,7 +14,6 @@
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
-    "cookies-next": "^2.1.1",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
     "framer-motion": "^9.0.1",
@@ -24,7 +23,6 @@
     "pocketbase": "^0.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.43.8",
     "typescript": "4.9.4"
   },
   "devDependencies": {
