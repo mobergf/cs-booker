@@ -1,3 +1,4 @@
+"use client";
 import {
   Accordion,
   AccordionButton,
@@ -13,11 +14,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { SignUpModal } from "components";
-import initPocketBase from "components/pocketbase/pocketbase";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const weekdays = [
   "Söndag",
@@ -29,23 +28,29 @@ const weekdays = [
   "Lördag",
 ];
 
-const Page = ({
-  matches,
-  userMatches,
-}: {
-  matches: string;
-  userMatches: string;
-}) => {
+const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
+  const [matchState, setMatchState] = useState(matches);
+  const [userMatchesState, setUserMatchesState] = useState(userMatches);
   const { isOpen, onOpen, onClose: discClose } = useDisclosure();
   const [activeSign, setActiveSign] = useState<{
     type: string;
     date: string;
   }>();
-  const { replace, asPath } = useRouter();
+  const { replace } = useRouter();
   const { data: userData } = useSession();
 
-  const data = JSON.parse(matches);
-  const parsedUserMatches = JSON.parse(userMatches);
+  useEffect(() => {
+    console.log("ändring");
+
+    setMatchState(matches);
+  }, [matches]);
+
+  useEffect(() => {
+    console.log("ändring");
+
+    setUserMatchesState(userMatches);
+  }, [userMatches]);
+
   const dateArray: string[] = [];
 
   for (let i = 0; i < 7; i++) {
@@ -65,14 +70,15 @@ const Page = ({
   };
 
   const handleRemoveSign = async (id: string) => {
-    await fetch("/api/deletesign", {
-      method: "POST",
+    await fetch("/api", {
+      method: "DELETE",
       body: JSON.stringify({
         id,
       }),
-    }).finally(() => {
-      replace(asPath, undefined, { scroll: false });
     });
+    // .finally(() => {
+    //   replace(pathname, { scroll: false });
+    // });
   };
 
   const DisplayList = ({
@@ -82,22 +88,25 @@ const Page = ({
     item: string;
     type: "day" | "night";
   }) =>
-    !!data?.items?.length &&
-    data.items.map(
+    !!matchState?.items?.length &&
+    matchState.items.map(
       (item2: any) =>
         new Date(item2.date).getDate() === new Date(item).getDate() &&
         item2.type === type && (
           <OrderedList
-            key={item2.date}
+            key={item2.date + userMatchesState?.totalItems}
             display={{ md: "grid" }}
             gridTemplateRows={{ md: "repeat(5, 1fr)" }}
             gridAutoFlow="column"
             p="4"
           >
-            {parsedUserMatches?.items
+            {userMatchesState?.items
               ?.filter((x: any) => x.match === item2.id)
               .map((pum: any, ix: number) => (
-                <ListItem key={ix} width="max-content">
+                <ListItem
+                  key={pum?.expand?.user?.name + userMatchesState?.totalItems}
+                  width="max-content"
+                >
                   {pum?.expand?.user?.name}
                   {pum.comment && ` (${pum.comment})`}
                 </ListItem>
@@ -114,8 +123,8 @@ const Page = ({
     type: "day" | "night";
   }) => {
     const hasMatchOnDate =
-      !!data?.items?.length &&
-      data.items.filter(
+      !!matchState?.items?.length &&
+      matchState.items.filter(
         (item2: any) =>
           new Date(item2.date).getDate() === new Date(item).getDate() &&
           item2.type === type
@@ -136,14 +145,14 @@ const Page = ({
       );
 
     return hasMatchOnDate.map((y: any, ix: number) =>
-      !!parsedUserMatches?.items?.find(
+      !!userMatchesState?.items?.find(
         (x: any) => x.match === y.id && x.user === userData?.user.id
       ) ? (
         <Button
           key={ix}
           onClick={() =>
             handleRemoveSign(
-              parsedUserMatches?.items?.find(
+              userMatchesState?.items?.find(
                 (x: any) => x.match === y.id && x.user === userData?.user.id
               ).id
             )
@@ -178,7 +187,7 @@ const Page = ({
       <Accordion defaultIndex={[0]} allowMultiple>
         {dateArray.map((item, ix) => (
           <AccordionItem
-            key={ix}
+            key={ix + userMatchesState?.totalItems}
             mt={{ base: 8, md: 6 }}
             boxShadow="lg"
             border="none"
@@ -235,37 +244,6 @@ const Page = ({
       {isOpen && <SignUpModal {...{ isOpen, onClose, activeSign }} />}
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  res,
-}: GetServerSidePropsContext) => {
-  const pb = await initPocketBase(req, res);
-
-  const csmatch = await pb
-    .collection("csmatch")
-    .getList(1, 50, {
-      filter: `date >= "${new Date().toISOString().slice(0, 10)}"`,
-    })
-    .then((res) => res);
-
-  const matchIds = csmatch?.items?.map((x) => x.id);
-
-  const usersPerMatch = await pb.collection("user_match").getList(1, 50, {
-    filter: `match = "${matchIds.join('" || match = "')}"`,
-    expand: "user",
-  });
-
-  const matches = JSON.stringify(csmatch);
-  const userMatches = JSON.stringify(usersPerMatch);
-
-  return {
-    props: {
-      matches,
-      userMatches,
-    },
-  };
 };
 
 export default Page;

@@ -11,7 +11,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 interface ISignUpModal {
@@ -24,11 +23,10 @@ const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
   const { data } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [commentValue, setCommentValue] = useState<string>();
-  const { replace, asPath } = useRouter();
 
   const submitSign = async () => {
     setIsLoading(true);
-    await fetch("/api/signup", {
+    await fetch("/api", {
       method: "POST",
       body: JSON.stringify({
         id: data?.user.id,
@@ -39,7 +37,6 @@ const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
     }).then((res) => {
       if (res.ok) {
         setIsLoading(false);
-        replace(asPath, undefined, { scroll: false });
         onClose();
       }
     });
