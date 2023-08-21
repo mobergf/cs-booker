@@ -11,6 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface ISignUpModal {
@@ -21,6 +22,7 @@ interface ISignUpModal {
 
 const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
   const { data } = useSession();
+  const { refresh } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [commentValue, setCommentValue] = useState<string>();
 

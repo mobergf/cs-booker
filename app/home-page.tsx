@@ -36,7 +36,7 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
     type: string;
     date: string;
   }>();
-  const { replace } = useRouter();
+  const { replace, refresh } = useRouter();
   const { data: userData } = useSession();
 
   useEffect(() => {
@@ -76,9 +76,6 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
         id,
       }),
     });
-    // .finally(() => {
-    //   replace(pathname, { scroll: false });
-    // });
   };
 
   const DisplayList = ({
