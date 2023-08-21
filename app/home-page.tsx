@@ -6,16 +6,14 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Button,
   Flex,
   Heading,
-  ListItem,
-  OrderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SignUpModal } from "components";
-import { signOut, useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { Button, SignUpModal } from "components";
+import { User } from "next-auth";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const weekdays = [
@@ -28,7 +26,7 @@ const weekdays = [
   "Lördag",
 ];
 
-const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
+const Page = ({ matches, userMatches, user }: { matches: any; userMatches: any; user: User }) => {
   const [matchState, setMatchState] = useState(matches);
   const [userMatchesState, setUserMatchesState] = useState(userMatches);
   const { isOpen, onOpen, onClose: discClose } = useDisclosure();
@@ -36,18 +34,13 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
     type: string;
     date: string;
   }>();
-  const { replace, refresh } = useRouter();
-  const { data: userData } = useSession();
+  const {  refresh } = useRouter();
 
   useEffect(() => {
-    console.log("ändring");
-
     setMatchState(matches);
   }, [matches]);
 
   useEffect(() => {
-    console.log("ändring");
-
     setUserMatchesState(userMatches);
   }, [userMatches]);
 
@@ -75,7 +68,7 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
       body: JSON.stringify({
         id,
       }),
-    });
+    }).then(() => refresh());
   };
 
   const DisplayList = ({
@@ -90,25 +83,22 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
       (item2: any) =>
         new Date(item2.date).getDate() === new Date(item).getDate() &&
         item2.type === type && (
-          <OrderedList
+          <ol
             key={item2.date + userMatchesState?.totalItems}
-            display={{ md: "grid" }}
-            gridTemplateRows={{ md: "repeat(5, 1fr)" }}
-            gridAutoFlow="column"
-            p="4"
+            className="md:grid grid-row-5 grid-flow-col p-4"
           >
             {userMatchesState?.items
               ?.filter((x: any) => x.match === item2.id)
-              .map((pum: any, ix: number) => (
-                <ListItem
+              .map((pum: any) => (
+                <li
                   key={pum?.expand?.user?.name + userMatchesState?.totalItems}
-                  width="max-content"
+                  className="w-max"
                 >
                   {pum?.expand?.user?.name}
                   {pum.comment && ` (${pum.comment})`}
-                </ListItem>
+                </li>
               ))}
-          </OrderedList>
+          </ol>
         )
     );
 
@@ -131,32 +121,27 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
       return (
         <Button
           onClick={() => handleClick(type, item)}
-          variant="outline"
-          minWidth={{ md: "40" }}
-          color="white"
-          bg="brand.primary"
-          _hover={{ lg: { bg: "brand.primaryDark" } }}
-        >
+          className="md:min-w-40"
+          >
           Signa upp
         </Button>
       );
 
     return hasMatchOnDate.map((y: any, ix: number) =>
-      !!userMatchesState?.items?.find(
-        (x: any) => x.match === y.id && x.user === userData?.user.id
+      userMatchesState?.items?.find(
+        (x: any) => x.match === y.id && x.user === user.id
       ) ? (
         <Button
           key={ix}
           onClick={() =>
             handleRemoveSign(
               userMatchesState?.items?.find(
-                (x: any) => x.match === y.id && x.user === userData?.user.id
+                (x: any) => x.match === y.id && x.user === user.id
               ).id
             )
           }
-          variant="outline"
-          minWidth={{ md: "40" }}
-          _hover={{ lg: { bg: "gray.100" } }}
+          className="md:min-w-40"
+          variant="secondary"
         >
           Signa av
         </Button>
@@ -164,11 +149,8 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          variant="outline"
-          minWidth={{ md: "40" }}
-          color="white"
-          bg="brand.primary"
-          _hover={{ lg: { bg: "brand.primaryDark" } }}
+          className="md:min-w-40"
+
         >
           Signa upp
         </Button>
@@ -176,11 +158,11 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
     );
   };
   return (
-    <>
-      <Flex px={{ base: 4, md: 0 }} direction="row" justify="space-between">
-        <Heading>Spela spel</Heading>
+    <div className="mx-auto mt-4 max-w-5xl px-4">
+      <div className="px-4 md:px-0 flex flex-row justify-between">
+        <h1 className="text-4xl font-bold">Spela spel</h1>
         <Button onClick={() => signOut()}>Logga ut</Button>
-      </Flex>
+      </div>
       <Accordion defaultIndex={[0]} allowMultiple>
         {dateArray.map((item, ix) => (
           <AccordionItem
@@ -239,7 +221,7 @@ const Page = ({ matches, userMatches }: { matches: any; userMatches: any }) => {
         ))}
       </Accordion>
       {isOpen && <SignUpModal {...{ isOpen, onClose, activeSign }} />}
-    </>
+    </div>
   );
 };
 

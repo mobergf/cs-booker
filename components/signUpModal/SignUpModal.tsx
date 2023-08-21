@@ -38,6 +38,7 @@ const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
       }),
     }).then((res) => {
       if (res.ok) {
+        refresh();
         setIsLoading(false);
         onClose();
       }

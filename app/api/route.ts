@@ -1,5 +1,5 @@
 import initPocketBase from "components/pocketbase/pocketbase";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";

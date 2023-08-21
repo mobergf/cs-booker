@@ -13,13 +13,6 @@ const getPageProps = async () => {
     { next: { tags: ["homepage"] } }
   ).then((res) => res.json());
 
-  // const csmatch = await pb
-  //   .collection("csmatch")
-  //   .getList(1, 50, {
-  //     filter: ,
-  //   })
-  //   .then((res) => res);
-
   const matchIds = csmatch?.items?.map((x: Record<string, string>) => x.id);
   const userPerMatchFilter = encodeURIComponent(
     `(match="${matchIds.join('" || match="')}")`
@@ -29,13 +22,6 @@ const getPageProps = async () => {
     `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/user_match/records?page=1&perPage=50&filter=${userPerMatchFilter}&expand=user`,
     { next: { tags: ["homepage-match"] } }
   ).then((res) => res.json());
-
-  // const usersPerMatch = await pb.collection("user_match").getList(1, 50, {
-  //   filter: `match = "${matchIds.join('" || match = "')}"`,
-  //   expand: "user",
-  // });
-
-  console.log(usersPerMatch?.totalItems);
 
   return {
     matches: csmatch,
@@ -53,6 +39,7 @@ export default async function Page() {
       key={pocketbaseData?.userMatches?.totalItems}
       userMatches={pocketbaseData.userMatches}
       matches={pocketbaseData.matches}
+      user={session?.user}
     />
   );
 }
