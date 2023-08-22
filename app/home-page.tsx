@@ -1,16 +1,6 @@
 "use client";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Flex,
-  Heading,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { Button, SignUpModal } from "components";
+import { useDisclosure } from "@chakra-ui/react";
+import { Button, Modal, SignUpModal } from "components";
 import { User } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -26,7 +16,15 @@ const weekdays = [
   "Lördag",
 ];
 
-const Page = ({ matches, userMatches, user }: { matches: any; userMatches: any; user: User }) => {
+const Page = ({
+  matches,
+  userMatches,
+  user,
+}: {
+  matches: any;
+  userMatches: any;
+  user: User;
+}) => {
   const [matchState, setMatchState] = useState(matches);
   const [userMatchesState, setUserMatchesState] = useState(userMatches);
   const { isOpen, onOpen, onClose: discClose } = useDisclosure();
@@ -34,7 +32,7 @@ const Page = ({ matches, userMatches, user }: { matches: any; userMatches: any; 
     type: string;
     date: string;
   }>();
-  const {  refresh } = useRouter();
+  const { refresh } = useRouter();
 
   useEffect(() => {
     setMatchState(matches);
@@ -85,21 +83,21 @@ const Page = ({ matches, userMatches, user }: { matches: any; userMatches: any; 
         item2.type === type && (
           <ol
             key={item2.date + userMatchesState?.totalItems}
-            className="md:grid grid-row-5 grid-flow-col p-4"
+            type="1"
+            className="grid-row-5 list-inside list-decimal grid-flow-col p-4 md:grid"
           >
             {userMatchesState?.items
               ?.filter((x: any) => x.match === item2.id)
               .map((pum: any) => (
                 <li
                   key={pum?.expand?.user?.name + userMatchesState?.totalItems}
-                  className="w-max"
                 >
                   {pum?.expand?.user?.name}
                   {pum.comment && ` (${pum.comment})`}
                 </li>
               ))}
           </ol>
-        )
+        ),
     );
 
   const ButtonFilter = ({
@@ -114,33 +112,30 @@ const Page = ({ matches, userMatches, user }: { matches: any; userMatches: any; 
       matchState.items.filter(
         (item2: any) =>
           new Date(item2.date).getDate() === new Date(item).getDate() &&
-          item2.type === type
+          item2.type === type,
       );
 
     if (!hasMatchOnDate?.length)
       return (
-        <Button
-          onClick={() => handleClick(type, item)}
-          className="md:min-w-40"
-          >
+        <Button onClick={() => handleClick(type, item)} className="md:min-w-40">
           Signa upp
         </Button>
       );
 
     return hasMatchOnDate.map((y: any, ix: number) =>
       userMatchesState?.items?.find(
-        (x: any) => x.match === y.id && x.user === user.id
+        (x: any) => x.match === y.id && x.user === user.id,
       ) ? (
         <Button
           key={ix}
           onClick={() =>
             handleRemoveSign(
               userMatchesState?.items?.find(
-                (x: any) => x.match === y.id && x.user === user.id
-              ).id
+                (x: any) => x.match === y.id && x.user === user.id,
+              ).id,
             )
           }
-          className="md:min-w-40"
+          className="md:min-w-[140px]"
           variant="secondary"
         >
           Signa av
@@ -149,78 +144,54 @@ const Page = ({ matches, userMatches, user }: { matches: any; userMatches: any; 
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          className="md:min-w-40"
-
+          className="md:min-w-[140px]"
         >
           Signa upp
         </Button>
-      )
+      ),
     );
   };
   return (
-    <div className="mx-auto mt-4 max-w-5xl px-4">
-      <div className="px-4 md:px-0 flex flex-row justify-between">
-        <h1 className="text-4xl font-bold">Spela spel</h1>
+    <div className="mx-auto mt-4 max-w-5xl md:px-4">
+      <div className="flex flex-row justify-between px-4 md:px-0">
+        <h1 className="text-3xl font-bold md:text-4xl">Spela spel</h1>
         <Button onClick={() => signOut()}>Logga ut</Button>
       </div>
-      <Accordion defaultIndex={[0]} allowMultiple>
-        {dateArray.map((item, ix) => (
-          <AccordionItem
-            key={ix + userMatchesState?.totalItems}
-            mt={{ base: 8, md: 6 }}
-            boxShadow="lg"
-            border="none"
-            bg="white"
-          >
-            <AccordionButton
-              py="4"
-              _hover={{ lg: { bgColor: "blackAlpha.50" } }}
-            >
-              <Box as="span" flex="1" textAlign="left">
-                <Heading variant="h2" fontSize="2xl">
-                  {`${weekdays[new Date(item).getDay()]} - ${item}`}
-                </Heading>
-              </Box>
-              <AccordionIcon fontSize="4xl" />
-            </AccordionButton>
-            <AccordionPanel p={{ base: 0, md: 8 }}>
-              <Box p={{ md: 4 }} bg="brand.gray">
-                <Flex
-                  direction="row"
-                  borderBottom="2px solid"
-                  borderColor="brand.green"
-                  justify="space-between"
-                  align="center"
-                  p="4"
-                >
-                  <Heading as="h3" fontSize="2xl">
-                    Lunchpang
-                  </Heading>
-                  <ButtonFilter item={item} type="day" />
-                </Flex>
-                <DisplayList item={item} type="day" />
-              </Box>
-              <Box p={{ md: 4 }} bg="brand.gray" mt={{ base: 4, md: 8 }}>
-                <Flex
-                  direction="row"
-                  borderBottom="2px solid"
-                  borderColor="brand.green"
-                  justify="space-between"
-                  align="center"
-                  p="4"
-                >
-                  <Heading as="h3" fontSize="2xl">
-                    Kvällspang
-                  </Heading>
-                  <ButtonFilter item={item} type="night" />
-                </Flex>
-                <DisplayList item={item} type="night" />
-              </Box>
-            </AccordionPanel>
-          </AccordionItem>
-        ))}
-      </Accordion>
-      {isOpen && <SignUpModal {...{ isOpen, onClose, activeSign }} />}
+      {dateArray.map((item, ix) => (
+        <section
+          key={ix + userMatchesState?.totalItems}
+          className="mt-8 border-y border-primary shadow-md md:mt-6 md:border"
+        >
+          <button className="inline-flex h-16 w-full px-4 py-4 hover:bg-zinc-200 dark:hover:bg-zinc-500">
+            <span className="flex flex-1 text-left">
+              <h2 className="text-xl md:text-2xl">
+                {`${weekdays[new Date(item).getDay()]} - ${item}`}
+              </h2>
+            </span>
+            <span>Ikon</span>
+          </button>
+          <div className="md:p-8">
+            <div className="bg-gray dark:bg-zinc-800 md:p-4">
+              <div className="flex flex-row items-center justify-between border-b-2 border-green p-4">
+                <h3 className="text-xl md:text-2xl">Lunchpang</h3>
+                <ButtonFilter item={item} type="day" />
+              </div>
+              <DisplayList item={item} type="day" />
+            </div>
+            <div className="bg-gray dark:bg-zinc-800 md:p-4">
+              <div className="flex flex-row items-center justify-between p-4">
+                <h3 className="text-xl md:text-2xl">Kvällspang</h3>
+                <ButtonFilter item={item} type="night" />
+              </div>
+              <DisplayList item={item} type="night" />
+            </div>
+          </div>
+        </section>
+      ))}
+      <Modal isOpened={isOpen} onClose={onClose}>
+        <SignUpModal {...{ activeSign, user, onClose }} />
+      </Modal>
+      {/* {isOpen && <SignUpModal {...{ isOpen, onClose, activeSign, user }} />} */}
     </div>
   );
 };
