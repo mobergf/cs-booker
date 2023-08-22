@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
           placeholder: "Password",
         },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const pocketbaseRes = await pb
           .collection("users")
           .authWithPassword(credentials?.username!, credentials?.password!);

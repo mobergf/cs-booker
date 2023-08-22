@@ -1,5 +1,4 @@
 "use client";
-import { useDisclosure } from "@chakra-ui/react";
 import { Button, Modal, SignUpModal } from "components";
 import { User } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -27,7 +26,7 @@ const Page = ({
 }) => {
   const [matchState, setMatchState] = useState(matches);
   const [userMatchesState, setUserMatchesState] = useState(userMatches);
-  const { isOpen, onOpen, onClose: discClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const [activeSign, setActiveSign] = useState<{
     type: string;
     date: string;
@@ -52,12 +51,12 @@ const Page = ({
 
   const handleClick = (type: string, date: string) => {
     setActiveSign({ type, date });
-    onOpen();
+    setIsOpen(true);
   };
 
   const onClose = () => {
     setActiveSign(undefined);
-    discClose();
+    setIsOpen(false);
   };
 
   const handleRemoveSign = async (id: string) => {
@@ -135,7 +134,7 @@ const Page = ({
               ).id,
             )
           }
-          className="md:min-w-[140px]"
+          className="md:min-w-[150px]"
           variant="secondary"
         >
           Signa av
@@ -144,7 +143,7 @@ const Page = ({
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          className="md:min-w-[140px]"
+          className="md:min-w-[150px]"
         >
           Signa upp
         </Button>
@@ -191,7 +190,6 @@ const Page = ({
       <Modal isOpened={isOpen} onClose={onClose}>
         <SignUpModal {...{ activeSign, user, onClose }} />
       </Modal>
-      {/* {isOpen && <SignUpModal {...{ isOpen, onClose, activeSign, user }} />} */}
     </div>
   );
 };

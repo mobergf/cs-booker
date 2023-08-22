@@ -1,4 +1,4 @@
-import { IncomingMessage, ServerResponse } from "http";
+import { IncomingMessage } from "http";
 import PocketBase from "pocketbase";
 
 // you can place this helper in a separate file so that it can be reused
@@ -6,7 +6,6 @@ export default async function initPocketBase(
   req:
     | (IncomingMessage & { cookies: Partial<{ [key: string]: string }> })
     | { name: string; value: string }[],
-  res?: ServerResponse
 ) {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -14,7 +13,7 @@ export default async function initPocketBase(
   pb.authStore.loadFromCookie(
     "headers" in req
       ? req?.headers?.cookie || ""
-      : req.find((x) => x.name === "next-auth.session-token")?.value ?? ""
+      : req.find((x) => x.name === "next-auth.session-token")?.value ?? "",
   );
 
   try {
