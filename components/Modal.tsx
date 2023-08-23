@@ -44,7 +44,7 @@ const DialogModal = ({ isOpened, onClose, children }: Props) => {
       }}
     >
       <dialog
-        className="shadow-gray-800 rounded-md p-6 shadow-md transition-all backdrop:bg-secondary backdrop:transition md:min-w-[400px] md:p-8"
+        className="shadow-gray-800 min-w-[90%] rounded-md bg-white p-6 text-secondary-dark shadow-md transition-all backdrop:bg-secondary backdrop:transition dark:bg-secondary-dark dark:text-zinc-200 md:min-w-[400px] md:p-8"
         ref={ref}
         onCancel={onClose}
         onClick={(e) =>

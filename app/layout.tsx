@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import "./globals.css";
+import ModeToggle from "./mode-toggle";
 
 export const metadata: Metadata = {
   title: "Panga huvudskott",
@@ -23,6 +24,7 @@ export default function RootLayout({
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </head>
       <body className="bg-white text-secondary-dark dark:bg-secondary-dark dark:text-zinc-200">
+        <ModeToggle />
         {children}
       </body>
     </html>

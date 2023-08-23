@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 body {
-    background: url("/csbook.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-blend-mode: multiply;
-    color: theme("colors.secondary-dark");
-    height: "100vh";
+  background: url("/csbook.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-blend-mode: multiply;
+  color: theme("colors.secondary-dark");
+  height: 100vh;
 }

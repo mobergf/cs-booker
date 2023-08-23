@@ -27,6 +27,7 @@ const Page = ({
   const [matchState, setMatchState] = useState(matches);
   const [userMatchesState, setUserMatchesState] = useState(userMatches);
   const [isOpen, setIsOpen] = useState(false);
+  const [openAccordion, setOpenAccordion] = useState(0);
   const [activeSign, setActiveSign] = useState<{
     type: string;
     date: string;
@@ -83,7 +84,7 @@ const Page = ({
           <ol
             key={item2.date + userMatchesState?.totalItems}
             type="1"
-            className="grid-row-5 list-inside list-decimal grid-flow-col p-4 md:grid"
+            className="list-inside list-decimal grid-flow-col grid-rows-5 p-4 md:grid"
           >
             {userMatchesState?.items
               ?.filter((x: any) => x.match === item2.id)
@@ -116,7 +117,10 @@ const Page = ({
 
     if (!hasMatchOnDate?.length)
       return (
-        <Button onClick={() => handleClick(type, item)} className="md:min-w-40">
+        <Button
+          onClick={() => handleClick(type, item)}
+          className="min-w-[150px]"
+        >
           Signa upp
         </Button>
       );
@@ -134,7 +138,7 @@ const Page = ({
               ).id,
             )
           }
-          className="md:min-w-[150px]"
+          className="min-w-[150px]"
           variant="secondary"
         >
           Signa av
@@ -143,7 +147,7 @@ const Page = ({
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          className="md:min-w-[150px]"
+          className="min-w-[150px]"
         >
           Signa upp
         </Button>
@@ -151,33 +155,55 @@ const Page = ({
     );
   };
   return (
-    <div className="mx-auto mt-4 max-w-5xl md:px-4">
-      <div className="flex flex-row justify-between px-4 md:px-0">
+    <div className="mx-auto mt-4 max-w-5xl pb-8 md:px-4">
+      <div className="flex flex-row items-center justify-between px-4 md:px-0">
         <h1 className="text-3xl font-bold md:text-4xl">Spela spel</h1>
         <Button onClick={() => signOut()}>Logga ut</Button>
       </div>
       {dateArray.map((item, ix) => (
         <section
           key={ix + userMatchesState?.totalItems}
-          className="mt-8 border-y border-primary shadow-md md:mt-6 md:border"
+          className={`mt-8 border-y border-primary shadow-md md:mt-6 md:border `}
         >
-          <button className="inline-flex h-16 w-full px-4 py-4 hover:bg-zinc-200 dark:hover:bg-zinc-500">
+          <button
+            className="inline-flex h-16 w-full items-center bg-zinc-200 bg-opacity-30 px-4 py-4 transition-colors hover:bg-zinc-200 hover:bg-opacity-60 dark:bg-secondary-dark dark:bg-opacity-70 dark:hover:bg-zinc-500 dark:hover:bg-opacity-30"
+            onClick={() => setOpenAccordion((prev) => (prev === ix ? 50 : ix))}
+          >
             <span className="flex flex-1 text-left">
               <h2 className="text-xl md:text-2xl">
                 {`${weekdays[new Date(item).getDay()]} - ${item}`}
               </h2>
             </span>
-            <span>Ikon</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className={`h-6 w-6 ${
+                openAccordion === ix ? "rotate-180" : "rotate-0"
+              }`}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
+            </svg>
           </button>
-          <div className="md:p-8">
-            <div className="bg-gray dark:bg-zinc-800 md:p-4">
+          <div
+            className={`${
+              openAccordion === ix ? "h-auto" : "invisible h-0"
+            } overflow-hidden`}
+          >
+            <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
               <div className="flex flex-row items-center justify-between border-b-2 border-green p-4">
                 <h3 className="text-xl md:text-2xl">Lunchpang</h3>
                 <ButtonFilter item={item} type="day" />
               </div>
               <DisplayList item={item} type="day" />
             </div>
-            <div className="bg-gray dark:bg-zinc-800 md:p-4">
+            <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
               <div className="flex flex-row items-center justify-between p-4">
                 <h3 className="text-xl md:text-2xl">Kvällspang</h3>
                 <ButtonFilter item={item} type="night" />
