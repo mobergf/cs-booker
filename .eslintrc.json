@@ -1,0 +1,6 @@
+{
+  "extends": ["eslint:recommended", "prettier", "next/core-web-vitals"],
+  "globals": {
+    "React": true
+  }
+}

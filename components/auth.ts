@@ -1,9 +1,8 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import PocketBase from "pocketbase";
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -16,7 +15,7 @@ export const authOptions: NextAuthOptions = {
           placeholder: "Password",
         },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const pocketbaseRes = await pb
           .collection("users")
           .authWithPassword(credentials?.username!, credentials?.password!);
@@ -43,4 +42,3 @@ export const authOptions: NextAuthOptions = {
     error: "/error",
   },
 };
-export default NextAuth(authOptions);

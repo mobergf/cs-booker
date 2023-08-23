@@ -1,12 +1,12 @@
 import initPocketBase from "components/pocketbase/pocketbase";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { NextRequest } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { type, date, id, comment } = JSON.parse(req.body);
-  const pb = await initPocketBase(req, res);
+export async function POST(req: NextRequest) {
+  const { type, date, id, comment } = await req.json();
+  const pb = await initPocketBase(cookies().getAll());
 
   const hasGame = await pb
     .collection("csmatch")
@@ -23,7 +23,7 @@ export default async function handler(
     };
 
     await pb.collection("user_match").create(postData);
-    return res.status(200).json({});
+    redirect("/");
   }
 
   await pb
@@ -37,5 +37,16 @@ export default async function handler(
       };
       await pb.collection("user_match").create(postData);
     });
-  return res.status(200).json({});
+
+  redirect("/");
+}
+
+export async function DELETE(req: Request) {
+  const { id } = await req.json();
+  const pb = await initPocketBase(cookies().getAll());
+
+  await pb.collection("user_match").delete(id);
+  revalidateTag("homepage");
+  revalidateTag("homepage-match");
+  redirect("/");
 }

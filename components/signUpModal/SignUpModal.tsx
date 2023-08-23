@@ -1,77 +1,64 @@
-import {
-  Button,
-  Flex,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useState } from "react";
+"use client";
+import Button from "components/Button";
+import { User } from "next-auth";
+import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 interface ISignUpModal {
-  isOpen: boolean;
   onClose: () => void;
   activeSign?: { type: string; date: string };
+  user: User;
 }
 
-const SignUpModal = ({ isOpen, onClose, activeSign }: ISignUpModal) => {
-  const { data } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
-  const [commentValue, setCommentValue] = useState<string>();
-  const { replace, asPath } = useRouter();
+const SignUpModal = ({ onClose, activeSign, user }: ISignUpModal) => {
+  const { refresh } = useRouter();
+  const commentRef = useRef<HTMLInputElement>(null);
 
   const submitSign = async () => {
-    setIsLoading(true);
-    await fetch("/api/signup", {
+    await fetch("/api", {
       method: "POST",
       body: JSON.stringify({
-        id: data?.user.id,
+        id: user.id,
         type: activeSign?.type,
         date: activeSign?.date,
-        comment: commentValue,
+        comment: commentRef.current?.value,
       }),
     }).then((res) => {
       if (res.ok) {
-        setIsLoading(false);
-        replace(asPath, undefined, { scroll: false });
+        refresh();
         onClose();
       }
     });
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {activeSign?.date}
-          {activeSign?.type === "night" ? " Kväll" : " Lunch"}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb="6" pt="0">
-          <Text>Kommentar</Text>
-          <Input
-            value={commentValue}
-            onChange={(e) => setCommentValue(e.target.value)}
-            placeholder="T.ex tid eller enbart inhouse"
-          />
-          <Flex direction="row" gap="4" mt="4">
-            <Button isLoading={isLoading} flex="1" onClick={() => submitSign()}>
-              Svara
-            </Button>
-            <Button variant="outline" flex="1" onClick={() => onClose()}>
-              Avbryt
-            </Button>
-          </Flex>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <div>
+      <h4 className="text-xl">
+        {activeSign?.date}
+        {activeSign?.type === "night" ? " Kväll" : " Lunch"}
+      </h4>
+      <div className="flex flex-col">
+        <label className="mt-1">Kommentar</label>
+        <input
+          ref={commentRef}
+          type="text"
+          placeholder="T.ex tid eller enbart inhouse"
+          className="min-h-12 rounded-md border border-primary p-2 transition-shadow focus:shadow-[0_0_0_1px_theme(colors.primary)] focus:outline-none"
+        />
+        <div className="mt-4 flex flex-row gap-4">
+          <Button className="inline-flex flex-1" onClick={() => submitSign()}>
+            Svara
+          </Button>
+          <Button
+            variant="secondary"
+            className="inline-flex flex-1"
+            onClick={() => onClose()}
+          >
+            Avbryt
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
