@@ -177,32 +177,35 @@ const Page = ({
                 </div>
               </span>
 
-              <div className="mr-5 flex gap-2">
-                <div className="height-100% flex items-center gap-1 px-2 py-1">
-                  <CutleryIcon />
-                  {dayUsers?.length}
+              <div className="flex items-center  gap-3 md:gap-8">
+                <div className="flex gap-2 md:gap-4">
+                  <div className="height-100% flex  gap-1">
+                    <CutleryIcon />
+                    {dayUsers?.length}
+                  </div>
+                  <div className="height-100% flex items-center gap-1  ">
+                    <DayIcon />
+                    {nightUsers?.length}
+                  </div>
                 </div>
-                <div className="height-100% flex items-center gap-1   px-2 py-1">
-                  <DayIcon />
-                  {nightUsers?.length}
-                </div>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className={`h-6 w-6 ${
+                    openAccordion === ix ? "rotate-180" : "rotate-0"
+                  }`}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  />
+                </svg>
               </div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className={`h-6 w-6 ${
-                  openAccordion === ix ? "rotate-180" : "rotate-0"
-                }`}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
-              </svg>
             </button>
             <div
               className={`${
