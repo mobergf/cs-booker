@@ -11,8 +11,8 @@ export default function Button({
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   const css =
     variant === "secondary"
-      ? `rounded-md inline-flex items-center justify-center bg-white dark:bg-transparent border border-primary px-4 py-2 text-lg transition-colors hover:bg-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-white focus:bg-primary-dark focus:outline-none disabled:cursor-not-allowed md:px-8 ${className}`
-      : `rounded-md inline-flex items-center justify-center border-none bg-primary px-4 py-2 text-lg text-white transition-colors hover:bg-primary-dark focus:bg-secondary-dark focus:outline-none disabled:cursor-not-allowed md:px-8 ${className}`;
+      ? `rounded-[3px] inline-flex items-center justify-center bg-white dark:bg-transparent border border-primary px-2 md:h-10 h-[30px] text-sm transition-colors hover:bg-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-white focus:bg-primary-dark focus:outline-none disabled:cursor-not-allowed md:px-4 ${className}`
+      : `rounded-[3px] inline-flex items-center justify-center border-none bg-primary px-2 md:h-10 h-[30px] text-sm text-white transition-colors hover:bg-primary-dark focus:bg-secondary-dark focus:outline-none disabled:cursor-not-allowed md:px-4 ${className}`;
 
   return (
     <button className={css} {...rest}>

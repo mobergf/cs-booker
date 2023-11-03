@@ -1,9 +1,9 @@
 "use client";
 import { Button, Modal, SignUpModal } from "components";
 import { User } from "next-auth";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ModeToggle from "./mode-toggle";
 
 const weekdays = [
   "Söndag",
@@ -84,7 +84,7 @@ const Page = ({
           <ol
             key={item2.date + userMatchesState?.totalItems}
             type="1"
-            className="list-inside list-decimal grid-flow-col grid-rows-5 p-4 md:grid"
+            className="list-inside list-decimal grid-flow-col grid-rows-5 py-2 md:grid"
           >
             {userMatchesState?.items
               ?.filter((x: any) => x.match === item2.id)
@@ -119,7 +119,7 @@ const Page = ({
       return (
         <Button
           onClick={() => handleClick(type, item)}
-          className="min-w-[150px]"
+          className="min-w-[100px]"
         >
           Signa upp
         </Button>
@@ -138,7 +138,7 @@ const Page = ({
               ).id,
             )
           }
-          className="min-w-[150px]"
+          className="min-w-[100px]"
           variant="secondary"
         >
           Signa av
@@ -147,7 +147,7 @@ const Page = ({
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          className="min-w-[150px]"
+          className="min-w-[100px]"
         >
           Signa upp
         </Button>
@@ -157,16 +157,16 @@ const Page = ({
   return (
     <div className="mx-auto mt-4 max-w-5xl pb-8 md:px-4">
       <div className="flex flex-row items-center justify-between px-4 md:px-0">
-        <h1 className="text-3xl font-bold md:text-4xl">Spela spel</h1>
-        <Button onClick={() => signOut()}>Logga ut</Button>
+        <h1 className="text-2xl font-bold md:text-4xl">HUVUDSKOTT.SE</h1>
+        <ModeToggle />
       </div>
       {dateArray.map((item, ix) => (
         <section
           key={ix + userMatchesState?.totalItems}
-          className={`mt-8 border-y border-primary shadow-md md:mt-6 md:border `}
+          className={`m-2 mt-8 rounded-[3px] bg-white dark:bg-[#182535] dark:bg-opacity-50 dark:bg-gradient-to-tl dark:from-[#2F3F5C]/50 dark:via-[#022B31]/50 dark:to-[#214F73]/50 md:m-0 md:mt-6`}
         >
           <button
-            className="inline-flex h-16 w-full items-center bg-zinc-200 bg-opacity-30 px-4 py-4 transition-colors hover:bg-zinc-200 hover:bg-opacity-60 dark:bg-secondary-dark dark:bg-opacity-70 dark:hover:bg-zinc-500 dark:hover:bg-opacity-30"
+            className="inline-flex h-16 w-full items-center  px-4 py-4 transition-colors "
             onClick={() => setOpenAccordion((prev) => (prev === ix ? 50 : ix))}
           >
             <span className="flex flex-1 text-left">
@@ -196,19 +196,23 @@ const Page = ({
               openAccordion === ix ? "h-auto" : "invisible h-0"
             } overflow-hidden`}
           >
-            <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
-              <div className="flex flex-row items-center justify-between border-b-2 border-green p-4">
-                <h3 className="text-xl md:text-2xl">Lunchpang</h3>
-                <ButtonFilter item={item} type="day" />
+            <div className="p-4 pt-2">
+              <div className="rounded-[3px] bg-zinc-200 p-4 dark:bg-black dark:bg-opacity-30">
+                <div className="flex flex-row items-center justify-between">
+                  <h3 className="text-xl md:text-2xl">Lunchpang</h3>
+                  <ButtonFilter item={item} type="day" />
+                </div>
+                <DisplayList item={item} type="day" />
               </div>
-              <DisplayList item={item} type="day" />
             </div>
-            <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
-              <div className="flex flex-row items-center justify-between p-4">
-                <h3 className="text-xl md:text-2xl">Kvällspang</h3>
-                <ButtonFilter item={item} type="night" />
+            <div className="p-4 pt-2">
+              <div className="rounded-[3px] bg-zinc-200 p-4 dark:bg-black dark:bg-opacity-30">
+                <div className="flex flex-row items-center justify-between ">
+                  <h3 className="text-xl md:text-2xl">Kvällspang</h3>
+                  <ButtonFilter item={item} type="night" />
+                </div>
+                <DisplayList item={item} type="night" />
               </div>
-              <DisplayList item={item} type="night" />
             </div>
           </div>
         </section>
