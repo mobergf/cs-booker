@@ -22,7 +22,7 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </head>
-      <body className="bg-white text-secondary-dark dark:bg-[#06111A]  dark:text-zinc-200">
+      <body className="bg-white text-secondary-dark dark:bg-[#07141f]   dark:text-zinc-200">
         {children}
       </body>
     </html>
