@@ -7,7 +7,7 @@ export default function ModeToggle() {
 
   return (
     <button
-      className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-secondary transition-colors dark:border-white "
+      className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-secondary transition-colors dark:border-white md:h-11 md:w-11 "
       onClick={() => toggleMode()}
     >
       {currentMode === "light" ? (
@@ -17,7 +17,7 @@ export default function ModeToggle() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="h-5 w-5 md:h-6 md:w-6"
         >
           <path
             strokeLinecap="round"
@@ -32,7 +32,7 @@ export default function ModeToggle() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="h-5 w-5 md:h-6 md:w-6"
         >
           <path
             strokeLinecap="round"
