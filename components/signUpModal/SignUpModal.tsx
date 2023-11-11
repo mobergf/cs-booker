@@ -43,7 +43,7 @@ const SignUpModal = ({ onClose, activeSign, user }: ISignUpModal) => {
           ref={commentRef}
           type="text"
           placeholder="T.ex tid eller enbart inhouse"
-          className="min-h-12 rounded-md border border-primary p-2 transition-shadow focus:shadow-[0_0_0_1px_theme(colors.primary)] focus:outline-none text-black"
+          className="min-h-12 rounded-md border-2 border-primary bg-transparent p-2 transition-shadow  focus:outline-none"
         />
         <div className="mt-4 flex flex-row gap-4">
           <Button className="inline-flex flex-1" onClick={() => submitSign()}>
