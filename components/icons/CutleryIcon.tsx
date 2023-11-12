@@ -1,11 +1,10 @@
-export const CutleryIcon = () => {
+export const CutleryIcon = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="15"
-      height="18"
       viewBox="0 0 15 18"
       fill="none"
+      className={`h-6 w-6 ${className}`}
     >
       <path
         d="M12.3684 8.41052V16.1579C12.3684 16.6211 11.9895 17 11.5263 17C11.0632 17 10.6842 16.6211 10.6842 16.1579V8.41052"

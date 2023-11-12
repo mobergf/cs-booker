@@ -4,9 +4,11 @@ import { DayIcon } from "components/icons/DayIcon";
 import { CutleryIcon } from "components/icons/CutleryIcon";
 import { getSignedUsersByDate, IMatchElement } from "core/helpers/db.helpers";
 import { User } from "next-auth";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ModeToggle from "./mode-toggle";
+import { MinusIcon } from "components/icons/MinusIcon";
+import { AddIcon } from "components/icons/AddIcon";
 
 const weekdays = [
   "Söndag",
@@ -78,7 +80,7 @@ const Page = ({
     return (
       <ol
         type="1"
-        className="list-inside list-decimal grid-flow-col grid-rows-5 p-4 md:grid"
+        className="list-inside list-decimal grid-flow-col grid-rows-5 py-2 md:grid"
       >
         {matches?.map((pum, key) => (
           <li key={`${pum?.name}${key}`}>
@@ -110,7 +112,7 @@ const Page = ({
       return (
         <Button
           onClick={() => handleClick(type, item)}
-          className="min-w-[150px]"
+          className="min-w-[100px]"
         >
           Signa upp
         </Button>
@@ -129,7 +131,7 @@ const Page = ({
               ).id,
             )
           }
-          className="min-w-[150px]"
+          className="min-w-[100px]"
           variant="secondary"
         >
           Signa av
@@ -138,7 +140,7 @@ const Page = ({
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          className="min-w-[150px]"
+          className="min-w-[100px]"
         >
           Signa upp
         </Button>
@@ -146,10 +148,10 @@ const Page = ({
     );
   };
   return (
-    <div className="mx-auto mt-4 max-w-5xl pb-8 md:px-4">
+    <div className="mx-auto max-w-5xl pb-8 pt-4 md:px-4">
       <div className="flex flex-row items-center justify-between px-4 md:px-0">
-        <h1 className="text-3xl font-bold md:text-4xl">Spela spel</h1>
-        <Button onClick={() => signOut()}>Logga ut</Button>
+        <h1 className="text-2xl font-bold md:text-4xl">HUVUDSKOTT.SE</h1>
+        <ModeToggle />
       </div>
       {dateArray.map((item, ix) => {
         const { dayUsers, nightUsers } = getSignedUsersByDate(
@@ -161,50 +163,32 @@ const Page = ({
         return (
           <section
             key={ix + userMatchesState?.totalItems}
-            className={`mt-8 border-y border-primary shadow-md md:mt-6 md:border `}
+            className={`m-2.5 mt-5 rounded-[3px] bg-white bg-opacity-70 dark:bg-[#182535] dark:bg-opacity-50 dark:bg-gradient-to-tl dark:from-[#2F3F5C]/50 dark:via-[#022B31]/50 dark:to-[#214F73]/50 md:m-0 md:mt-6`}
           >
             <button
-              className="inline-flex h-16 w-full items-center bg-zinc-200 bg-opacity-30 px-4 py-4 transition-colors hover:bg-zinc-200 hover:bg-opacity-60 dark:bg-secondary-dark dark:bg-opacity-70 dark:hover:bg-zinc-500 dark:hover:bg-opacity-30"
+              className="inline-flex w-full items-center px-4 py-4 "
               onClick={() =>
                 setOpenAccordion((prev) => (prev === ix ? 50 : ix))
               }
             >
-              <span className="flex flex-1 text-left">
-                <div className="flex">
-                  <h2 className="text-xl md:text-2xl">
-                    {`${weekdays[new Date(item).getDay()]} - ${item}`}
-                  </h2>
-                </div>
-              </span>
-
-              <div className="flex items-center  gap-3 md:gap-8">
-                <div className="flex gap-2 md:gap-4">
-                  <div className="height-100% flex  gap-1">
+              <span className="w-full">
+                <h2 className="flex text-xl md:text-2xl">
+                  {`${weekdays[new Date(item).getDay()]} - ${item}`}
+                </h2>
+                <div className="flex gap-4 pt-1 md:pt-2">
+                  <div className="flex h-full  gap-1">
                     <CutleryIcon />
                     {dayUsers?.length}
                   </div>
-                  <div className="height-100% flex items-center gap-1  ">
+                  <div className="flex h-full items-center gap-1  ">
                     <DayIcon />
                     {nightUsers?.length}
                   </div>
                 </div>
+              </span>
 
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className={`h-6 w-6 ${
-                    openAccordion === ix ? "rotate-180" : "rotate-0"
-                  }`}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
+              <div className="flex items-center  gap-3 md:gap-8">
+                {openAccordion === ix ? <MinusIcon /> : <AddIcon />}
               </div>
             </button>
             <div
@@ -212,19 +196,29 @@ const Page = ({
                 openAccordion === ix ? "h-auto" : "invisible h-0"
               } overflow-hidden`}
             >
-              <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
-                <div className="flex flex-row items-center justify-between border-b-2 border-green p-4">
-                  <h3 className="text-xl md:text-2xl">Lunchpang</h3>
-                  <ButtonFilter item={item} type="day" />
+              <div className="p-4 pt-0">
+                <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
+                  <div className="flex flex-row items-center justify-between">
+                    <h3 className="text-xl md:text-2xl">
+                      <CutleryIcon className="mr-1 inline-flex h-5 w-5" />
+                      Lunchpang
+                    </h3>
+                    <ButtonFilter item={item} type="day" />
+                  </div>
+                  <DisplayList matches={dayUsers} />
                 </div>
-                <DisplayList matches={dayUsers} />
               </div>
-              <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
-                <div className="flex flex-row items-center justify-between p-4">
-                  <h3 className="text-xl md:text-2xl">Kvällspang</h3>
-                  <ButtonFilter item={item} type="night" />
+              <div className="p-4 pt-0">
+                <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
+                  <div className="flex flex-row items-center justify-between">
+                    <h3 className="text-xl md:text-2xl">
+                      <DayIcon className="mr-1 inline-flex h-5 w-5" />
+                      Kvällspang
+                    </h3>
+                    <ButtonFilter item={item} type="night" />
+                  </div>
+                  <DisplayList matches={nightUsers} />
                 </div>
-                <DisplayList matches={nightUsers} />
               </div>
             </div>
           </section>
