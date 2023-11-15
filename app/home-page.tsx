@@ -1,9 +1,14 @@
 "use client";
 import { Button, Modal, SignUpModal } from "components";
+import { DayIcon } from "components/icons/DayIcon";
+import { CutleryIcon } from "components/icons/CutleryIcon";
+import { getSignedUsersByDate, IMatchElement } from "core/helpers/db.helpers";
 import { User } from "next-auth";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ModeToggle from "./mode-toggle";
+import { MinusIcon } from "components/icons/MinusIcon";
+import { AddIcon } from "components/icons/AddIcon";
 
 const weekdays = [
   "Söndag",
@@ -69,37 +74,25 @@ const Page = ({
     }).then(() => refresh());
   };
 
-  const DisplayList = ({
-    item,
-    type,
-  }: {
-    item: string;
-    type: "day" | "night";
-  }) =>
-    !!matchState?.items?.length &&
-    matchState.items.map(
-      (item2: any) =>
-        new Date(item2.date).getDate() === new Date(item).getDate() &&
-        item2.type === type && (
-          <ol
-            key={item2.date + userMatchesState?.totalItems}
-            type="1"
-            className="list-inside list-decimal grid-flow-col grid-rows-5 p-4 md:grid"
-          >
-            {userMatchesState?.items
-              ?.filter((x: any) => x.match === item2.id)
-              .map((pum: any) => (
-                <li
-                  key={pum?.expand?.user?.name + userMatchesState?.totalItems}
-                >
-                  {pum?.expand?.user?.name}
-                  {pum.comment && ` (${pum.comment})`}
-                </li>
-              ))}
-          </ol>
-        ),
-    );
+  const DisplayList = ({ matches }: { matches: IMatchElement[] }) => {
+    if (!matches) return null;
 
+    return (
+      <ol
+        type="1"
+        className="list-inside list-decimal grid-flow-col grid-rows-5 py-2 md:grid"
+      >
+        {matches?.map((pum, key) => (
+          <li key={`${pum?.name}${key}`}>
+            {pum?.name}
+            {pum.comment && ` (${pum.comment})`}
+          </li>
+        ))}
+      </ol>
+    );
+  };
+
+  //TODO: Use getSigned... method?
   const ButtonFilter = ({
     item,
     type,
@@ -119,7 +112,7 @@ const Page = ({
       return (
         <Button
           onClick={() => handleClick(type, item)}
-          className="min-w-[150px]"
+          className="min-w-[100px]"
         >
           Signa upp
         </Button>
@@ -138,7 +131,7 @@ const Page = ({
               ).id,
             )
           }
-          className="min-w-[150px]"
+          className="min-w-[100px]"
           variant="secondary"
         >
           Signa av
@@ -147,7 +140,7 @@ const Page = ({
         <Button
           key={ix}
           onClick={() => handleClick(type, item)}
-          className="min-w-[150px]"
+          className="min-w-[100px]"
         >
           Signa upp
         </Button>
@@ -155,64 +148,82 @@ const Page = ({
     );
   };
   return (
-    <div className="mx-auto mt-4 max-w-5xl pb-8 md:px-4">
+    <div className="mx-auto max-w-5xl pb-8 pt-4 md:px-4">
       <div className="flex flex-row items-center justify-between px-4 md:px-0">
-        <h1 className="text-3xl font-bold md:text-4xl">Spela spel</h1>
-        <Button onClick={() => signOut()}>Logga ut</Button>
+        <h1 className="text-2xl font-bold md:text-4xl">HUVUDSKOTT.SE</h1>
+        <ModeToggle />
       </div>
-      {dateArray.map((item, ix) => (
-        <section
-          key={ix + userMatchesState?.totalItems}
-          className={`mt-8 border-y border-primary shadow-md md:mt-6 md:border `}
-        >
-          <button
-            className="inline-flex h-16 w-full items-center bg-zinc-200 bg-opacity-30 px-4 py-4 transition-colors hover:bg-zinc-200 hover:bg-opacity-60 dark:bg-secondary-dark dark:bg-opacity-70 dark:hover:bg-zinc-500 dark:hover:bg-opacity-30"
-            onClick={() => setOpenAccordion((prev) => (prev === ix ? 50 : ix))}
+      {dateArray.map((item, ix) => {
+        const { dayUsers, nightUsers } = getSignedUsersByDate(
+          userMatches,
+          matches,
+          item,
+        );
+
+        return (
+          <section
+            key={ix + userMatchesState?.totalItems}
+            className={`m-2.5 mt-5 rounded-[3px] bg-white bg-opacity-70 dark:bg-[#182535] dark:bg-opacity-50 dark:bg-gradient-to-tl dark:from-[#2F3F5C]/50 dark:via-[#022B31]/50 dark:to-[#214F73]/50 md:m-0 md:mt-6`}
           >
-            <span className="flex flex-1 text-left">
-              <h2 className="text-xl md:text-2xl">
-                {`${weekdays[new Date(item).getDay()]} - ${item}`}
-              </h2>
-            </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className={`h-6 w-6 ${
-                openAccordion === ix ? "rotate-180" : "rotate-0"
-              }`}
+            <button
+              className="inline-flex w-full items-center px-4 py-4 "
+              onClick={() =>
+                setOpenAccordion((prev) => (prev === ix ? 50 : ix))
+              }
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
-          </button>
-          <div
-            className={`${
-              openAccordion === ix ? "h-auto" : "invisible h-0"
-            } overflow-hidden`}
-          >
-            <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
-              <div className="flex flex-row items-center justify-between border-b-2 border-green p-4">
-                <h3 className="text-xl md:text-2xl">Lunchpang</h3>
-                <ButtonFilter item={item} type="day" />
+              <span className="w-full">
+                <h2 className="flex text-xl md:text-2xl">
+                  {`${weekdays[new Date(item).getDay()]} - ${item}`}
+                </h2>
+                <div className="flex gap-4 pt-1 md:pt-2">
+                  <div className="flex h-full  gap-1">
+                    <CutleryIcon />
+                    {dayUsers?.length}
+                  </div>
+                  <div className="flex h-full items-center gap-1  ">
+                    <DayIcon />
+                    {nightUsers?.length}
+                  </div>
+                </div>
+              </span>
+
+              <div className="flex items-center  gap-3 md:gap-8">
+                {openAccordion === ix ? <MinusIcon /> : <AddIcon />}
               </div>
-              <DisplayList item={item} type="day" />
-            </div>
-            <div className="bg-gray dark:bg-secondary-dark dark:bg-opacity-70 md:p-4">
-              <div className="flex flex-row items-center justify-between p-4">
-                <h3 className="text-xl md:text-2xl">Kvällspang</h3>
-                <ButtonFilter item={item} type="night" />
+            </button>
+            <div
+              className={`${
+                openAccordion === ix ? "h-auto" : "invisible h-0"
+              } overflow-hidden`}
+            >
+              <div className="p-4 pt-0">
+                <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
+                  <div className="flex flex-row items-center justify-between">
+                    <h3 className="text-xl md:text-2xl">
+                      <CutleryIcon className="mr-1 inline-flex h-5 w-5" />
+                      Lunchpang
+                    </h3>
+                    <ButtonFilter item={item} type="day" />
+                  </div>
+                  <DisplayList matches={dayUsers} />
+                </div>
               </div>
-              <DisplayList item={item} type="night" />
+              <div className="p-4 pt-0">
+                <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
+                  <div className="flex flex-row items-center justify-between">
+                    <h3 className="text-xl md:text-2xl">
+                      <DayIcon className="mr-1 inline-flex h-5 w-5" />
+                      Kvällspang
+                    </h3>
+                    <ButtonFilter item={item} type="night" />
+                  </div>
+                  <DisplayList matches={nightUsers} />
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
-      ))}
+          </section>
+        );
+      })}
       <Modal isOpened={isOpen} onClose={onClose}>
         <SignUpModal {...{ activeSign, user, onClose }} />
       </Modal>
