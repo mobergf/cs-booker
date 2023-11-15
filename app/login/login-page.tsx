@@ -1,4 +1,5 @@
 "use client";
+import ModeToggle from "app/mode-toggle";
 import { Button } from "components";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -6,10 +7,11 @@ import { useRef, useState } from "react";
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
+
   const [error, setError] = useState(
     searchParams?.get("callbackUrl")?.includes("error")
       ? "Couldn't authenticate"
-      : ""
+      : "",
   );
 
   const userRef = useRef<HTMLInputElement>(null);
@@ -28,6 +30,9 @@ export default function LoginPage() {
 
   return (
     <div>
+      <div className="absolute top-8 flex min-w-[300px] justify-center md:min-w-[400px]">
+        <ModeToggle />
+      </div>
       <h1 className="animate-bounce text-center text-4xl font-bold text-primary">
         Spella spell
       </h1>
@@ -42,7 +47,7 @@ export default function LoginPage() {
           type="text"
           id="user-input"
           placeholder="Username"
-          className="min-h-12 bg-transparent rounded-md border border-primary p-2 transition-shadow focus:shadow-[0_0_0_1px_theme(colors.primary)] focus:outline-none"
+          className="min-h-12 rounded-md border border-primary bg-transparent p-2 transition-shadow focus:shadow-[0_0_0_1px_theme(colors.primary)] focus:outline-none"
         />
         <label className="mt-2 text-lg ">Password</label>
         <input
@@ -50,7 +55,7 @@ export default function LoginPage() {
           type="password"
           id="password-input"
           placeholder="Password"
-          className="min-h-12 rounded-md bg-transparent border border-primary p-2 transition-shadow focus:shadow-[0_0_0_1px_theme(colors.primary)] focus:outline-none"
+          className="min-h-12 rounded-md border border-primary bg-transparent p-2 transition-shadow focus:shadow-[0_0_0_1px_theme(colors.primary)] focus:outline-none"
         />
         <Button className="mt-4" type="submit">
           Log in
