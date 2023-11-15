@@ -1,14 +1,13 @@
 "use client";
-import { Button, Modal, SignUpModal } from "components";
-import { DayIcon } from "components/icons/DayIcon";
-import { CutleryIcon } from "components/icons/CutleryIcon";
-import { getSignedUsersByDate, IMatchElement } from "core/helpers/db.helpers";
+import { Modal, SignUpModal } from "components";
+import { getSignedUsersByDate } from "core/helpers/db.helpers";
 import { User } from "next-auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ModeToggle from "./mode-toggle";
-import { MinusIcon } from "components/icons/MinusIcon";
-import { AddIcon } from "components/icons/AddIcon";
+import { IMatch, IMatches, IUserMatch } from "core/interfaces/db.interfaces";
+import { ButtonFilter, UserList } from "./home-page.components";
+import { AddIcon, CutleryIcon, DayIcon, MinusIcon } from "components/icons";
 
 const weekdays = [
   "Söndag",
@@ -25,12 +24,10 @@ const Page = ({
   userMatches,
   user,
 }: {
-  matches: any;
-  userMatches: any;
+  matches: IMatches<IMatch>;
+  userMatches: IMatches<IUserMatch>;
   user: User;
 }) => {
-  const [matchState, setMatchState] = useState(matches);
-  const [userMatchesState, setUserMatchesState] = useState(userMatches);
   const [isOpen, setIsOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(0);
   const [activeSign, setActiveSign] = useState<{
@@ -38,14 +35,6 @@ const Page = ({
     date: string;
   }>();
   const { refresh } = useRouter();
-
-  useEffect(() => {
-    setMatchState(matches);
-  }, [matches]);
-
-  useEffect(() => {
-    setUserMatchesState(userMatches);
-  }, [userMatches]);
 
   const dateArray: string[] = [];
 
@@ -65,7 +54,8 @@ const Page = ({
     setIsOpen(false);
   };
 
-  const handleRemoveSign = async (id: string) => {
+  const handleRemoveSign = async (id?: string) => {
+    if (!id) throw new Error("User is not signed up for that match");
     await fetch("/api", {
       method: "DELETE",
       body: JSON.stringify({
@@ -74,95 +64,22 @@ const Page = ({
     }).then(() => refresh());
   };
 
-  const DisplayList = ({ matches }: { matches: IMatchElement[] }) => {
-    if (!matches) return null;
-
-    return (
-      <ol
-        type="1"
-        className="list-inside list-decimal grid-flow-col grid-rows-5 py-2 md:grid"
-      >
-        {matches?.map((pum, key) => (
-          <li key={`${pum?.name}${key}`}>
-            {pum?.name}
-            {pum.comment && ` (${pum.comment})`}
-          </li>
-        ))}
-      </ol>
-    );
-  };
-
-  //TODO: Use getSigned... method?
-  const ButtonFilter = ({
-    item,
-    type,
-  }: {
-    item: string;
-    type: "day" | "night";
-  }) => {
-    const hasMatchOnDate =
-      !!matchState?.items?.length &&
-      matchState.items.filter(
-        (item2: any) =>
-          new Date(item2.date).getDate() === new Date(item).getDate() &&
-          item2.type === type,
-      );
-
-    if (!hasMatchOnDate?.length)
-      return (
-        <Button
-          onClick={() => handleClick(type, item)}
-          className="min-w-[100px]"
-        >
-          Signa upp
-        </Button>
-      );
-
-    return hasMatchOnDate.map((y: any, ix: number) =>
-      userMatchesState?.items?.find(
-        (x: any) => x.match === y.id && x.user === user.id,
-      ) ? (
-        <Button
-          key={ix}
-          onClick={() =>
-            handleRemoveSign(
-              userMatchesState?.items?.find(
-                (x: any) => x.match === y.id && x.user === user.id,
-              ).id,
-            )
-          }
-          className="min-w-[100px]"
-          variant="secondary"
-        >
-          Signa av
-        </Button>
-      ) : (
-        <Button
-          key={ix}
-          onClick={() => handleClick(type, item)}
-          className="min-w-[100px]"
-        >
-          Signa upp
-        </Button>
-      ),
-    );
-  };
   return (
     <div className="mx-auto max-w-5xl pb-8 pt-4 md:px-4">
       <div className="flex flex-row items-center justify-between px-4 md:px-0">
         <h1 className="text-2xl font-bold md:text-4xl">HUVUDSKOTT.SE</h1>
         <ModeToggle />
       </div>
-      {dateArray.map((item, ix) => {
+      {dateArray.map((matchDate, ix) => {
         const { dayUsers, nightUsers } = getSignedUsersByDate(
           userMatches,
           matches,
-          item,
+          matchDate,
         );
 
         return (
           <section
-            key={ix + userMatchesState?.totalItems}
+            key={ix + userMatches?.totalItems}
             className={`m-2.5 mt-5 rounded-[3px] bg-white bg-opacity-70 dark:bg-[#182535] dark:bg-opacity-50 dark:bg-gradient-to-tl dark:from-[#2F3F5C]/50 dark:via-[#022B31]/50 dark:to-[#214F73]/50 md:m-0 md:mt-6`}
           >
             <button
@@ -173,7 +90,7 @@ const Page = ({
             >
               <span className="w-full">
                 <h2 className="flex text-xl md:text-2xl">
-                  {`${weekdays[new Date(item).getDay()]} - ${item}`}
+                  {`${weekdays[new Date(matchDate).getDay()]} - ${matchDate}`}
                 </h2>
                 <div className="flex gap-4 pt-1 md:pt-2">
                   <div className="flex h-full  gap-1">
@@ -203,9 +120,19 @@ const Page = ({
                       <CutleryIcon className="mr-1 inline-flex h-5 w-5" />
                       Lunchpang
                     </h3>
-                    <ButtonFilter item={item} type="day" />
+                    <ButtonFilter
+                      {...{
+                        matchDate,
+                        matches,
+                        userMatches,
+                        handleClick,
+                        handleRemoveSign,
+                        user,
+                      }}
+                      type="day"
+                    />
                   </div>
-                  <DisplayList matches={dayUsers} />
+                  <UserList matches={dayUsers} />
                 </div>
               </div>
               <div className="p-4 pt-0">
@@ -215,9 +142,19 @@ const Page = ({
                       <DayIcon className="mr-1 inline-flex h-5 w-5" />
                       Kvällspang
                     </h3>
-                    <ButtonFilter item={item} type="night" />
+                    <ButtonFilter
+                      {...{
+                        matchDate,
+                        matches,
+                        userMatches,
+                        handleClick,
+                        handleRemoveSign,
+                        user,
+                      }}
+                      type="night"
+                    />
                   </div>
-                  <DisplayList matches={nightUsers} />
+                  <UserList matches={nightUsers} />
                 </div>
               </div>
             </div>
