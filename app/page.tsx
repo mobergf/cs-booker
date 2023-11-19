@@ -20,7 +20,7 @@ const getPageProps = async () => {
   );
 
   const usersPerMatch: IMatches<IUserMatch> = await fetch(
-    `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/user_match/records?page=1&perPage=50&filter=${userPerMatchFilter}&expand=user`,
+    `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/user_match/records?page=1&perPage=50&filter=${userPerMatchFilter}&expand=user&sort=+created`,
     { next: { tags: ["homepage-match"] } },
   ).then((res) => res.json());
 
