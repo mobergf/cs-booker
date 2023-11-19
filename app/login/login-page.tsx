@@ -34,7 +34,7 @@ export default function LoginPage() {
         <ModeToggle />
       </div>
       <h1 className="animate-bounce text-center text-4xl font-bold text-primary">
-        Spella spell
+        HUVUDSKOTT.SE
       </h1>
       <form
         onSubmit={(e) => handleSubmit(e)}
