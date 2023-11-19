@@ -110,10 +110,12 @@ const Page = ({
             </button>
             <div
               className={`grid transition-all ${
-                openAccordion === ix ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                openAccordion === ix
+                  ? "opacity-1 grid-rows-[1fr]"
+                  : "grid-rows-[0fr] opacity-0"
               }`}
             >
-              <div className="overflow-hidden ">
+              <div className="overflow-hidden">
                 <div className="p-4 pt-0">
                   <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
                     <div className="flex flex-row items-center justify-between">
