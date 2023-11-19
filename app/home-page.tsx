@@ -80,7 +80,7 @@ const Page = ({
         return (
           <section
             key={ix + userMatches?.totalItems}
-            className={`m-2.5 mt-5 rounded-[3px] bg-white bg-opacity-70 dark:bg-[#182535] dark:bg-opacity-50 dark:bg-gradient-to-tl dark:from-[#2F3F5C]/50 dark:via-[#022B31]/50 dark:to-[#214F73]/50 md:m-0 md:mt-6`}
+            className={`m-2.5 mt-5 grid rounded-[3px] bg-white bg-opacity-70 dark:bg-[#182535] dark:bg-opacity-50 dark:bg-gradient-to-tl dark:from-[#2F3F5C]/50 dark:via-[#022B31]/50 dark:to-[#214F73]/50 md:m-0 md:mt-6`}
           >
             <button
               className="inline-flex w-full items-center px-4 py-4 "
@@ -109,52 +109,54 @@ const Page = ({
               </div>
             </button>
             <div
-              className={`${
-                openAccordion === ix ? "h-auto" : "invisible h-0"
-              } overflow-hidden`}
+              className={`grid transition-all ${
+                openAccordion === ix ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+              }`}
             >
-              <div className="p-4 pt-0">
-                <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
-                  <div className="flex flex-row items-center justify-between">
-                    <h3 className="text-xl md:text-2xl">
-                      <CutleryIcon className="mr-1 inline-flex h-5 w-5" />
-                      Lunchpang
-                    </h3>
-                    <ButtonFilter
-                      {...{
-                        matchDate,
-                        matches,
-                        userMatches,
-                        handleClick,
-                        handleRemoveSign,
-                        user,
-                      }}
-                      type="day"
-                    />
+              <div className="overflow-hidden ">
+                <div className="p-4 pt-0">
+                  <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
+                    <div className="flex flex-row items-center justify-between">
+                      <h3 className="text-xl md:text-2xl">
+                        <CutleryIcon className="mr-1 inline-flex h-5 w-5" />
+                        Lunchpang
+                      </h3>
+                      <ButtonFilter
+                        {...{
+                          matchDate,
+                          matches,
+                          userMatches,
+                          handleClick,
+                          handleRemoveSign,
+                          user,
+                        }}
+                        type="day"
+                      />
+                    </div>
+                    <UserList matches={dayUsers} />
                   </div>
-                  <UserList matches={dayUsers} />
                 </div>
-              </div>
-              <div className="p-4 pt-0">
-                <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
-                  <div className="flex flex-row items-center justify-between">
-                    <h3 className="text-xl md:text-2xl">
-                      <DayIcon className="mr-1 inline-flex h-5 w-5" />
-                      Kvällspang
-                    </h3>
-                    <ButtonFilter
-                      {...{
-                        matchDate,
-                        matches,
-                        userMatches,
-                        handleClick,
-                        handleRemoveSign,
-                        user,
-                      }}
-                      type="night"
-                    />
+                <div className="p-4 pt-0">
+                  <div className="rounded-[3px] bg-[#B3BDCD25] p-4 dark:bg-black dark:bg-opacity-30">
+                    <div className="flex flex-row items-center justify-between">
+                      <h3 className="text-xl md:text-2xl">
+                        <DayIcon className="mr-1 inline-flex h-5 w-5" />
+                        Kvällspang
+                      </h3>
+                      <ButtonFilter
+                        {...{
+                          matchDate,
+                          matches,
+                          userMatches,
+                          handleClick,
+                          handleRemoveSign,
+                          user,
+                        }}
+                        type="night"
+                      />
+                    </div>
+                    <UserList matches={nightUsers} />
                   </div>
-                  <UserList matches={nightUsers} />
                 </div>
               </div>
             </div>
