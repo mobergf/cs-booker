@@ -1,8 +1,8 @@
 import HomePage from "./home-page";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "components/auth";
 import { IMatches, IMatch, IUserMatch } from "core/interfaces/db.interfaces";
+import { authOptions } from "core/auth";
 
 const getPageProps = async () => {
   const encodedFilter = encodeURIComponent(

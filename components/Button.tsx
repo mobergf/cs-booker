@@ -6,7 +6,7 @@ export default function Button({
   variant,
   ...rest
 }: {
-  variant?: "secondary" | "blue";
+  variant?: "secondary";
   children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   const css =
