@@ -1,0 +1,92 @@
+[
+  {
+    "domain": ".facebook.com",
+    "expirationDate": 1709907087.862897,
+    "hostOnly": false,
+    "httpOnly": true,
+    "key": "datr",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "jcTbY6A9XhskRmEibFrTej7U"
+  },
+  {
+    "domain": ".facebook.com",
+    "expirationDate": 1739439967.652838,
+    "hostOnly": false,
+    "httpOnly": true,
+    "key": "sb",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "nMTbY5ll5uLybu767yaO_oqL"
+  },
+  {
+    "domain": ".facebook.com",
+    "expirationDate": 1739439967.652722,
+    "hostOnly": false,
+    "httpOnly": true,
+    "key": "oo",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "v1%7C3%3A1704879965"
+  },
+  {
+    "domain": ".facebook.com",
+    "expirationDate": 1737452633.60331,
+    "hostOnly": false,
+    "httpOnly": false,
+    "key": "c_user",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "61555385495166"
+  },
+  {
+    "domain": ".facebook.com",
+    "expirationDate": 1737452633.603344,
+    "hostOnly": false,
+    "httpOnly": true,
+    "key": "xs",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "10%3ARK_Odb9DH6yQvg%3A2%3A1704879965%3A-1%3A-1%3A%3AAcXzstbR-v_F7vgO9emuR34oRB8LL8mdJmpyQ1YGZg"
+  },
+  {
+    "domain": ".facebook.com",
+    "expirationDate": 1706521437,
+    "hostOnly": false,
+    "httpOnly": false,
+    "key": "wd",
+    "path": "/",
+    "sameSite": "lax",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "2060x1109"
+  },
+  {
+    "domain": ".facebook.com",
+    "hostOnly": false,
+    "httpOnly": false,
+    "key": "presence",
+    "path": "/",
+    "sameSite": "unspecified",
+    "secure": true,
+    "session": true,
+    "storeId": "0",
+    "value": "C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1705916637196%2C%22v%22%3A1%7D"
+  }
+]
